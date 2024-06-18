@@ -153,4 +153,10 @@ class MemcacheDataCollector extends DataCollector
     {
         return 'memcache';
     }
+
+    public function reset()
+    {
+        $this->pools = [];
+        $this->options = [];
+    }
 }
