@@ -1,4 +1,5 @@
 <?php
+
 namespace Lsw\MemcacheBundle\Cache;
 
 /**

@@ -20,51 +20,51 @@ class ClearCommand extends ContainerAwareCommand
      */
     private $memcache;
 
-   /**
-    * Configure the CLI task
-    *
-    * @return void
-    */
-   protected function configure()
-   {
-      $this
-        ->setName('memcache:clear')
-        ->setDescription('Invalidate all Memcache items')
-        ->setDefinition(array(
-            new InputArgument('pool', InputArgument::REQUIRED, 'The pool'),
-        ));
-   }
+    /**
+     * Configure the CLI task
+     *
+     * @return void
+     */
+    protected function configure()
+    {
+        $this
+          ->setName('memcache:clear')
+          ->setDescription('Invalidate all Memcache items')
+          ->setDefinition([
+              new InputArgument('pool', InputArgument::REQUIRED, 'The pool'),
+          ]);
+    }
 
-   /**
-    * Execute the CLI task
-    *
-    * @param InputInterface  $input  Command input
-    * @param OutputInterface $output Command output
-    *
-    * @return void
-    */
-   protected function execute(InputInterface $input, OutputInterface $output)
-   {
+    /**
+     * Execute the CLI task
+     *
+     * @param InputInterface  $input  Command input
+     * @param OutputInterface $output Command output
+     *
+     * @return void
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $pool = $input->getArgument('pool');
 
         try {
             $this->memcache = $this->getContainer()->get('memcache.'.$pool);
 
-            $output->writeln($this->memcache->flush()?'<info>OK</info>':'<error>ERROR</error>');
+            $output->writeln($this->memcache->flush() ? '<info>OK</info>' : '<error>ERROR</error>');
         } catch (ServiceNotFoundException $e) {
             $output->writeln("<error>pool '$pool' is not found</error>");
         }
-   }
+    }
 
-   /**
-    * Choose the pool
-    *
-    * @param InputInterface  $input  Input interface
-    * @param OutputInterface $output Output interface
-    *
-    * @see Command
-    * @return mixed
-    */
+    /**
+     * Choose the pool
+     *
+     * @param InputInterface  $input  Input interface
+     * @param OutputInterface $output Output interface
+     *
+     * @see Command
+     * @return mixed
+     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         if (!$input->getArgument('pool')) {

@@ -2,12 +2,14 @@
 
 namespace Lsw\MemcacheBundle\Tests\Cache;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Testing the MemcacheInterface Switch.
  *
  * @author Julius Beckmann <github@h4cc.de>
  */
-class MemcacheInterfaceTest extends \PHPUnit_Framework_TestCase
+class MemcacheInterfaceTest extends TestCase
 {
     public function testInterfaceWorks()
     {
@@ -25,30 +27,29 @@ class MemcacheInterfaceTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private function getDefaultMethods()
+    private function getDefaultMethods(): array
     {
-        return array(
-			'setFailureCallback',
-			'getServerStatus',
-			'getVersion',
-			'add',
-			'set',
-			'replace',
-			'cas',
-			'prepend',
-			'get',
-			'getStats',
-			'getExtendedStats',
-			'setCompressThreshold',
-			'delete',
-			'increment',
-			'decrement',
-			'close',
-			'flush',
-			'addServer',
-			'connect',
-			'findServer',
-        );
+        return [
+            'setFailureCallback',
+            'getServerStatus',
+            'getVersion',
+            'add',
+            'set',
+            'replace',
+            'cas',
+            'prepend',
+            'get',
+            'getStats',
+            'getExtendedStats',
+            'setCompressThreshold',
+            'delete',
+            'increment',
+            'decrement',
+            'close',
+            'flush',
+            'addServer',
+            'connect',
+            'findServer',
+        ];
     }
 }
- 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Lsw\MemcacheBundle\Command;
-
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\DialogHelper;
@@ -20,7 +18,7 @@ class InteractHelper
     private function askForPoolQuestion(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output)
     {
         $question = new Question("$this->questionText ($this->defaultPool)", $this->defaultPool);
-        $question->setValidator(function($pool) {
+        $question->setValidator(function ($pool) {
             if (empty($pool)) {
                 throw new \Exception($this->exceptionMessage);
             }
@@ -39,8 +37,7 @@ class InteractHelper
         $pool = $dialogHelper->askAndValidate(
             $output,
             $this->questionText,
-            function($pool)
-            {
+            function ($pool) {
                 if (empty($pool)) {
                     throw new \Exception($this->exceptionMessage);
                 }

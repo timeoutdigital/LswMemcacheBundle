@@ -34,13 +34,13 @@ class LswMemcacheExtension extends Extension
         if (isset($config['session'])) {
             $this->enableSessionSupport($config, $container);
         } else {
-        	$container->setParameter('memcache.session_handler.auto_load',false);
+            $container->setParameter('memcache.session_handler.auto_load', false);
         }
         if (isset($config['doctrine'])) {
-          $this->loadDoctrine($config, $container);
+            $this->loadDoctrine($config, $container);
         }
         if (isset($config['firewall'])) {
-        	$this->loadFirewall($config, $container);
+            $this->loadFirewall($config, $container);
         }
         if (isset($config['pools'])) {
             $this->addClients($config['pools'], $container);
@@ -67,7 +67,7 @@ class LswMemcacheExtension extends Extension
         }
         // calculate options
         $sessionOptions = $container->getParameter('session.storage.options');
-        $options = array();
+        $options = [];
         if (isset($config['session']['ttl'])) {
             $options['expiretime'] = $config['session']['ttl'];
         } elseif (isset($sessionOptions['cookie_lifetime'])) {
@@ -85,7 +85,7 @@ class LswMemcacheExtension extends Extension
         $definition
             ->addArgument(new Reference(sprintf('memcache.%s', $pool)))
             ->addArgument($options);
-       	$this->addClassesToCompile(array($definition->getClass()));
+        $this->addClassesToCompile([$definition->getClass()]);
     }
 
     /**
@@ -105,9 +105,9 @@ class LswMemcacheExtension extends Extension
                 } else { // For Symfony <2.8 compatibility
                     $def->setScope(ContainerInterface::SCOPE_CONTAINER);
                 }
-                $def->addMethodCall('setMemcache', array($pool));
+                $def->addMethodCall('setMemcache', [$pool]);
                 if ($cache['prefix']) {
-                    $def->addMethodCall('setPrefix', array($cache['prefix']));
+                    $def->addMethodCall('setPrefix', [$cache['prefix']]);
                 }
                 $container->setDefinition(sprintf('doctrine.orm.%s_%s', $em, $name), $def);
             }
@@ -118,15 +118,15 @@ class LswMemcacheExtension extends Extension
                 } else { // For Symfony <2.8 compatibility
                     $def->setScope(ContainerInterface::SCOPE_CONTAINER);
                 }
-                $def->addMethodCall('setMemcache', array($pool));
+                $def->addMethodCall('setMemcache', [$pool]);
                 if ($cache['prefix']) {
-                    $def->addMethodCall('setPrefix', array($cache['prefix']));
+                    $def->addMethodCall('setPrefix', [$cache['prefix']]);
                 }
                 $container->setDefinition(sprintf('doctrine.odm.mongodb.%s_%s', $dm, $name), $def);
             }
         }
     }
-    
+
     /**
      * Loads the Firewall configuration.
      *
@@ -135,31 +135,31 @@ class LswMemcacheExtension extends Extension
      */
     protected function loadFirewall(array $config, ContainerBuilder $container)
     {
-    	// make sure the pool is specified and it exists
-    	$pool = $config['firewall']['pool'];
-    	if (null === $pool) {
-    		return;
-    	}
-    	if (!isset($config['pools']) || !isset($config['pools'][$pool])) {
-    		throw new \LogicException(sprintf('The pool "%s" does not exist! Cannot enable the firewall!', $pool));
-    	}
-    	// calculate options
-    	$options = array();
-    	$options['prefix'] = $config['firewall']['prefix'];
-    	$options['concurrency']    = $config['firewall']['concurrency'];
-    	$options['spin_lock_wait'] = $config['firewall']['spin_lock_wait'];
-    	$options['lock_max_wait']  = $config['firewall']['lock_max_wait'];
-    	$options['reverse_proxies']  = $config['firewall']['reverse_proxies'];
-    	$options['x_forwarded_for']  = $config['firewall']['x_forwarded_for'];
-    	// load the firewall handler
-    	$definition = new Definition($container->getParameter('memcache.firewall_handler.class'));
-    	$container->setDefinition('memcache.firewall_handler', $definition);
-    	$definition
-    	    ->addArgument(new Reference(sprintf('memcache.%s', $pool)))
-    	    ->addArgument($options);
-    	$definition->addTag('kernel.event_listener', array('event'=>'kernel.request','method'=>'onKernelRequest'));
-    	$definition->addTag('kernel.event_listener', array('event'=>'kernel.terminate','method'=>'onKernelTerminate'));
-    	$this->addClassesToCompile(array($definition->getClass()));
+        // make sure the pool is specified and it exists
+        $pool = $config['firewall']['pool'];
+        if (null === $pool) {
+            return;
+        }
+        if (!isset($config['pools']) || !isset($config['pools'][$pool])) {
+            throw new \LogicException(sprintf('The pool "%s" does not exist! Cannot enable the firewall!', $pool));
+        }
+        // calculate options
+        $options = [];
+        $options['prefix'] = $config['firewall']['prefix'];
+        $options['concurrency']    = $config['firewall']['concurrency'];
+        $options['spin_lock_wait'] = $config['firewall']['spin_lock_wait'];
+        $options['lock_max_wait']  = $config['firewall']['lock_max_wait'];
+        $options['reverse_proxies']  = $config['firewall']['reverse_proxies'];
+        $options['x_forwarded_for']  = $config['firewall']['x_forwarded_for'];
+        // load the firewall handler
+        $definition = new Definition($container->getParameter('memcache.firewall_handler.class'));
+        $container->setDefinition('memcache.firewall_handler', $definition);
+        $definition
+            ->addArgument(new Reference(sprintf('memcache.%s', $pool)))
+            ->addArgument($options);
+        $definition->addTag('kernel.event_listener', ['event' => 'kernel.request','method' => 'onKernelRequest']);
+        $definition->addTag('kernel.event_listener', ['event' => 'kernel.terminate','method' => 'onKernelTerminate']);
+        $this->addClassesToCompile([$definition->getClass()]);
     }
 
     /**
@@ -198,7 +198,7 @@ class LswMemcacheExtension extends Extension
 
         // Add servers to the memcache pool
         foreach ($config['servers'] as $s) {
-            $server = array(
+            $server = [
                 $s['host'],
                 $s['tcp_port'],
                 $s['udp_port'],
@@ -206,15 +206,15 @@ class LswMemcacheExtension extends Extension
                 $s['weight'],
                 $s['timeout'],
                 $s['retry_interval']
-            );
+            ];
             if ($s['host']) {
                 $memcache->addMethodCall('addServer', $server);
             }
         }
-        
+
         $memcache->addArgument($config['options']);
 
-        $options = array();
+        $options = [];
         // Make sure that config values are human readable
         foreach ($config['options'] as $key => $value) {
             $options[$key] = var_export($value, true);
@@ -226,7 +226,7 @@ class LswMemcacheExtension extends Extension
         // Add the service to the data collector
         if ($container->hasDefinition('memcache.data_collector')) {
             $definition = $container->getDefinition('memcache.data_collector');
-            $definition->addMethodCall('addClient', array($name, $options, new Reference($serviceName)));
+            $definition->addMethodCall('addClient', [$name, $options, new Reference($serviceName)]);
         }
     }
 

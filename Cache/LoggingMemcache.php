@@ -1,325 +1,385 @@
 <?php
+
 namespace Lsw\MemcacheBundle\Cache;
 
-class LoggingMemcache extends \MemcachePool implements MemcacheInterface, LoggingMemcacheInterface {
-    public function __construct($logging) {
-        $this->calls = array();
+class LoggingMemcache extends \MemcachePool implements MemcacheInterface, LoggingMemcacheInterface
+{
+    public function __construct($logging)
+    {
+        $this->calls = [];
         $this->logging = $logging;
     }
+
     private $calls;
     private $logging;
-    public function getLoggedCalls() {
+
+    public function getLoggedCalls()
+    {
         return $this->calls;
     }
-    private function logCall($start, $result) {
+
+    private function logCall($start, $result)
+    {
         $time = microtime(true) - $start;
-        $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+        $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         return $result;
     }
-    public function setFailureCallback($failureCallback) {
-        if ($this->logging) { 
+
+    public function setFailureCallback($failureCallback): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'setFailureCallback';
-            $arguments = array($failureCallback);
+            $arguments = [$failureCallback];
         }
-        list($_failureCallback) = array($failureCallback);
+        list($_failureCallback) = [$failureCallback];
         $result = parent::setFailureCallback($_failureCallback);
-        list($failureCallback) = array($_failureCallback);
+        list($failureCallback) = [$_failureCallback];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function getServerStatus($host,$port=11211) {
-        if ($this->logging) { 
+
+    public function getServerStatus($host, $port = 11211): int|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'getServerStatus';
-            $arguments = array($host,$port);
+            $arguments = [$host, $port];
         }
-        list($_host,$_port) = array($host,$port);
-        $result = parent::getServerStatus($_host,$_port);
-        list($host,$port) = array($_host,$_port);
+        list($_host, $_port) = [$host, $port];
+        $result = parent::getServerStatus($_host, $_port);
+        list($host, $port) = [$_host, $_port];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function getVersion() {
-        if ($this->logging) { 
+
+    public function getVersion(): string|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'getVersion';
-            $arguments = array();
+            $arguments = [];
         }
         $result = parent::getVersion();
 
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function add($key,$var=null,$flag=0,$exptime=0) {
-        if ($this->logging) { 
+
+   public function add(array|string $key, mixed $value = null, int $flags = 0, int $exptime = 0, int $cas = 0): bool
+
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'add';
-            $arguments = array($key,$var,$flag,$exptime);
+            $arguments = [$key, $value, $flags, $exptime];
         }
-        list($_key,$_var,$_flag,$_exptime) = array($key,$var,$flag,$exptime);
-        $result = parent::add($_key,$_var,$_flag,$_exptime);
-        list($key,$var,$flag,$exptime) = array($_key,$_var,$_flag,$_exptime);
+        list($_key, $_var, $_flag, $_exptime) = [$key, $value, $flags, $exptime];
+        $result = parent::add($_key, $_var, $_flag, $_exptime);
+        list($key, $value, $flags, $exptime) = [$_key, $_var, $_flag, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function set($key,$var=null,$flag=0,$exptime=0) {
-        if ($this->logging) { 
+
+    public function set(array|string $key, mixed $value = null, int $flags = 0, int $exptime = 0, int $cas = 0): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'set';
-            $arguments = array($key,$var,$flag,$exptime);
+            $arguments = [$key, $value, $flags, $exptime];
         }
-        list($_key,$_var,$_flag,$_exptime) = array($key,$var,$flag,$exptime);
-        $result = parent::set($_key,$_var,$_flag,$_exptime);
-        list($key,$var,$flag,$exptime) = array($_key,$_var,$_flag,$_exptime);
+        list($_key, $_var, $_flag, $_exptime) = [$key, $value, $flags, $exptime];
+        $result = parent::set($_key, $_var, $_flag, $_exptime);
+        list($key, $value, $flags, $exptime) = [$_key, $_var, $_flag, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function replace($key,$var=null,$flag=0,$exptime=0) {
-        if ($this->logging) { 
+
+    public function replace(array|string $key, mixed $value = null, int $flags = 0, int $exptime = 0, int $cas = 0): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'replace';
-            $arguments = array($key,$var,$flag,$exptime);
+            $arguments = [$key, $value, $flags, $exptime];
         }
-        list($_key,$_var,$_flag,$_exptime) = array($key,$var,$flag,$exptime);
-        $result = parent::replace($_key,$_var,$_flag,$_exptime);
-        list($key,$var,$flag,$exptime) = array($_key,$_var,$_flag,$_exptime);
+        list($_key, $_var, $_flag, $_exptime) = [$key, $value, $flags, $exptime];
+        $result = parent::replace($_key, $_var, $_flag, $_exptime);
+        list($key, $value, $flags, $exptime) = [$_key, $_var, $_flag, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function cas($key,$var=null,$flag=0,$exptime=0,$cas=0) {
-        if ($this->logging) { 
+
+    public function cas(array|string $key, mixed $value = null, int $flags = 0, int $exptime = 0, int $cas = 0): bool {
+
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'cas';
-            $arguments = array($key,$var,$flag,$exptime,$cas);
+            $arguments = [$key, $value, $flags, $exptime, $cas];
         }
-        list($_key,$_var,$_flag,$_exptime,$_cas) = array($key,$var,$flag,$exptime,$cas);
-        $result = parent::cas($_key,$_var,$_flag,$_exptime,$_cas);
-        list($key,$var,$flag,$exptime,$cas) = array($_key,$_var,$_flag,$_exptime,$_cas);
+        list($_key, $_var, $_flag, $_exptime, $_cas) = [$key, $value, $flags, $exptime, $cas];
+        $result = parent::cas($_key, $_var, $_flag, $_exptime, $_cas);
+        list($key, $value, $flags, $exptime, $cas) = [$_key, $_var, $_flag, $_exptime, $_cas];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function prepend($key,$var=null,$flag=0,$exptime=0) {
-        if ($this->logging) { 
+
+    public function prepend(array|string $key, mixed $value = null, int $flags = 0, int $exptime = 0, int $cas = 0): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'prepend';
-            $arguments = array($key,$var,$flag,$exptime);
+            $arguments = [$key, $value, $flags, $exptime];
         }
-        list($_key,$_var,$_flag,$_exptime) = array($key,$var,$flag,$exptime);
-        $result = parent::prepend($_key,$_var,$_flag,$_exptime);
-        list($key,$var,$flag,$exptime) = array($_key,$_var,$_flag,$_exptime);
+        list($_key, $_var, $_flag, $_exptime) = [$key, $value, $flags, $exptime];
+        $result = parent::prepend($_key, $_var, $_flag, $_exptime);
+        list($key, $value, $flags, $exptime) = [$_key, $_var, $_flag, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function get($key,&$flags=null,&$cas=null) {
-        if ($this->logging) { 
+
+    public function get(array|string $key, mixed &$flags = null, mixed &$cas = null): mixed
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'get';
-            $arguments = array($key,$flags,$cas);
+            $arguments = [$key, $flags, $cas];
         }
-        list($_key,$_flags,$_cas) = array($key,$flags,$cas);
-        $result = parent::get($_key,$_flags,$_cas);
-        list($key,$flags,$cas) = array($_key,$_flags,$_cas);
+        list($_key, $_flags, $_cas) = [$key, $flags, $cas];
+        $result = parent::get($_key, $_flags, $_cas);
+        list($key, $flags, $cas) = [$_key, $_flags, $_cas];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function getStats($type='',$slabid=0,$limit=100) {
-        if ($this->logging) { 
+
+    public function getstats(string $type = '', int $slabid = 0, int $limit = 100): array|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'getStats';
-            $arguments = array($type,$slabid,$limit);
+            $arguments = [$type, $slabid, $limit];
         }
-        list($_type,$_slabid,$_limit) = array($type,$slabid,$limit);
+        list($_type, $_slabid, $_limit) = [$type, $slabid, $limit];
         if ($_type == '') {
             $result = parent::getStats();
         } else {
             $result = parent::getStats($_type, $_slabid, $_limit);
         }
-        list($type,$slabid,$limit) = array($_type,$_slabid,$_limit);
+        list($type, $slabid, $limit) = [$_type, $_slabid, $_limit];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function getExtendedStats($type='',$slabid=0,$limit=100) {
-        if ($this->logging) { 
+
+    public function getextendedstats(string $type = '', int $slabid = 0, int $limit = 100): array|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'getExtendedStats';
-            $arguments = array($type,$slabid,$limit);
+            $arguments = [$type, $slabid, $limit];
         }
-        list($_type,$_slabid,$_limit) = array($type,$slabid,$limit);
+        list($_type, $_slabid, $_limit) = [$type, $slabid, $limit];
         if ($_type == '') {
             $result = parent::getExtendedStats();
         } else {
             $result = parent::getExtendedStats($_type, $_slabid, $_limit);
         }
-        list($type,$slabid,$limit) = array($_type,$_slabid,$_limit);
+        list($type, $slabid, $limit) = [$_type, $_slabid, $_limit];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function setCompressThreshold($threshold,$minSavings=0.2) {
-        if ($this->logging) { 
+
+    public function setcompressthreshold(int $threshold, float $min_savings = 0.2): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'setCompressThreshold';
-            $arguments = array($threshold,$minSavings);
+            $arguments = [$threshold, $min_savings];
         }
-        list($_threshold,$_minSavings) = array($threshold,$minSavings);
-        $result = parent::setCompressThreshold($_threshold,$_minSavings);
-        list($threshold,$minSavings) = array($_threshold,$_minSavings);
+        list($_threshold, $_minSavings) = [$threshold, $min_savings];
+        $result = parent::setCompressThreshold($_threshold, $_minSavings);
+        list($threshold, $min_savings) = [$_threshold, $_minSavings];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function delete($key,$exptime=0) {
-        if ($this->logging) { 
+
+    public function delete(array|string $key, int $exptime = 0): array|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'delete';
-            $arguments = array($key,$exptime);
+            $arguments = [$key, $exptime];
         }
-        list($_key,$_exptime) = array($key,$exptime);
-        $result = parent::delete($_key,$_exptime);
-        list($key,$exptime) = array($_key,$_exptime);
+        list($_key, $_exptime) = [$key, $exptime];
+        $result = parent::delete($_key, $_exptime);
+        list($key, $exptime) = [$_key, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function increment($key,$value=1,$defval=0,$exptime=0) {
-        if ($this->logging) { 
+
+    public function increment(array|string $key, int $value = 1, int $defval = 0, int $exptime = 0): array|int|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'increment';
-            $arguments = array($key,$value,$defval,$exptime);
+            $arguments = [$key, $value, $defval, $exptime];
         }
-        list($_key,$_value,$_defval,$_exptime) = array($key,$value,$defval,$exptime);
-        $result = parent::increment($_key,$_value,$_defval,$_exptime);
-        list($key,$value,$defval,$exptime) = array($_key,$_value,$_defval,$_exptime);
+        list($_key, $_value, $_defval, $_exptime) = [$key, $value, $defval, $exptime];
+        $result = parent::increment($_key, $_value, $_defval, $_exptime);
+        list($key, $value, $defval, $exptime) = [$_key, $_value, $_defval, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function decrement($key,$value=1,$defval=0,$exptime=0) {
-        if ($this->logging) { 
+
+    public function decrement(array|string $key, int $value = 1, int $defval = 0, int $exptime = 0): array|int|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'decrement';
-            $arguments = array($key,$value,$defval,$exptime);
+            $arguments = [$key, $value, $defval, $exptime];
         }
-        list($_key,$_value,$_defval,$_exptime) = array($key,$value,$defval,$exptime);
-        $result = parent::decrement($_key,$_value,$_defval,$_exptime);
-        list($key,$value,$defval,$exptime) = array($_key,$_value,$_defval,$_exptime);
+        list($_key, $_value, $_defval, $_exptime) = [$key, $value, $defval, $exptime];
+        $result = parent::decrement($_key, $_value, $_defval, $_exptime);
+        list($key, $value, $defval, $exptime) = [$_key, $_value, $_defval, $_exptime];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function close() {
-        if ($this->logging) { 
+
+    public function close(): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'close';
-            $arguments = array();
+            $arguments = [];
         }
         $result = parent::close();
 
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function flush($delay=0) {
-        if ($this->logging) { 
+
+    public function flush($delay = 0): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'flush';
-            $arguments = array($delay);
+            $arguments = [$delay];
         }
-        list($_delay) = array($delay);
+        list($_delay) = [$delay];
         $result = parent::flush($_delay);
-        list($delay) = array($_delay);
+        list($delay) = [$_delay];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function addServer($host,$tcpPort=11211,$udpPort=0,$persistent=true,$weight=1,$timeout=1,$retryInterval=15,$status=true) {
-        if ($this->logging) { 
+
+
+    public function addServer($host, $tcp_port = 11211, $udp_port = 0, $persistent = true, $weight = 1, $timeout = 1, $retry_interval = 15, $status = true): bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'addServer';
-            $arguments = array($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval,$status);
+            $arguments = [$host, $tcp_port, $udp_port, $persistent, $weight, $timeout, $retry_interval, $status];
         }
-        list($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval,$_status) = array($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval,$status);
-        $result = parent::addServer($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval,$_status);
-        list($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval,$status) = array($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval,$_status);
+
+        list($_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval, $_status) = [$host, $tcp_port, $udp_port, $persistent, $weight, $timeout, $retry_interval, $status];
+
+        $result = parent::addServer($_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval, $_status);
+
+        list($host, $tcp_port, $udp_port, $persistent, $weight, $timeout, $retry_interval, $status) = [$_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval, $_status];
+
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
+
         return $result;
     }
-    public function connect($host,$tcpPort=11211,$udpPort=0,$persistent=true,$weight=1,$timeout=1,$retryInterval=15) {
-        if ($this->logging) { 
+
+    public function connect($host, $tcpPort = 11211, $udpPort = 0, $persistent = true, $weight = 1, $timeout = 1, $retryInterval = 15)
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'connect';
-            $arguments = array($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval);
+            $arguments = [$host, $tcpPort, $udpPort, $persistent, $weight, $timeout, $retryInterval];
         }
-        list($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval) = array($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval);
-        $result = parent::connect($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval);
-        list($host,$tcpPort,$udpPort,$persistent,$weight,$timeout,$retryInterval) = array($_host,$_tcpPort,$_udpPort,$_persistent,$_weight,$_timeout,$_retryInterval);
+        list($_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval) = [$host, $tcpPort, $udpPort, $persistent, $weight, $timeout, $retryInterval];
+        $result = parent::connect($_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval);
+        list($host, $tcpPort, $udpPort, $persistent, $weight, $timeout, $retryInterval) = [$_host, $_tcpPort, $_udpPort, $_persistent, $_weight, $_timeout, $_retryInterval];
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
         return $result;
     }
-    public function findServer($key) {
-        if ($this->logging) { 
+
+    public function findServer($key): string|bool
+    {
+        if ($this->logging) {
             $start = microtime(true);
             $name = 'findServer';
-            $arguments = array($key);
+            $arguments = [$key];
         }
-        list($_key) = array($key);
+
+        list($_key) = [$key];
+
         $result = parent::findServer($_key);
-        list($key) = array($_key);
+
+        list($key) = [$_key];
+
         if ($this->logging) {
             $time = microtime(true) - $start;
-            $this->calls[] = (object) compact('start', 'time', 'name', 'arguments', 'result');
+            $this->calls[] = (object)compact('start', 'time', 'name', 'arguments', 'result');
         }
+
         return $result;
     }
 }

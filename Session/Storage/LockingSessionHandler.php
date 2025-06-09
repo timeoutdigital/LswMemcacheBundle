@@ -1,4 +1,5 @@
 <?php
+
 namespace Lsw\MemcacheBundle\Session\Storage;
 
 /**
@@ -13,11 +14,10 @@ namespace Lsw\MemcacheBundle\Session\Storage;
  */
 class LockingSessionHandler implements \SessionHandlerInterface
 {
-
     /**
      * @var integer Default PHP max execution time in seconds
      */
-    const DEFAULT_MAX_EXECUTION_TIME = 30;
+    public const DEFAULT_MAX_EXECUTION_TIME = 30;
 
     /**
      * @var boolean Indicates an sessions should be locked
@@ -74,13 +74,14 @@ class LockingSessionHandler implements \SessionHandlerInterface
      *
      * @throws \InvalidArgumentException When unsupported options are passed
      */
-    public function __construct(\MemcachePool $memcache, array $options = array())
+    public function __construct(\MemcachePool $memcache, array $options = [])
     {
         $this->memcache = $memcache;
 
-        if ($diff = array_diff(array_keys($options), array('prefix', 'expiretime', 'locking', 'spin_lock_wait', 'lock_max_wait'))) {
+        if ($diff = array_diff(array_keys($options), ['prefix', 'expiretime', 'locking', 'spin_lock_wait', 'lock_max_wait'])) {
             throw new \InvalidArgumentException(sprintf(
-                'The following options are not supported "%s"', implode(', ', $diff)
+                'The following options are not supported "%s"',
+                implode(', ', $diff)
             ));
         }
 
@@ -110,8 +111,8 @@ class LockingSessionHandler implements \SessionHandlerInterface
         $attempts = (1000000 / $this->spinLockWait) * $this->lockMaxWait;
 
         $this->lockKey = $sessionId.'.lock';
-        for ($i=0;$i<$attempts;$i++) {
-            $success = $this->memcache->add($this->prefix.$this->lockKey, '1', null, $this->lockMaxWait+1);
+        for ($i = 0;$i < $attempts;$i++) {
+            $success = $this->memcache->add($this->prefix.$this->lockKey, '1', null, $this->lockMaxWait + 1);
             if ($success) {
                 $this->locked = true;
                 return true;
@@ -169,7 +170,7 @@ class LockingSessionHandler implements \SessionHandlerInterface
                 }
             }
         }
-        
+
         return $this->memcache->set($this->prefix.$sessionId, $data, null, $this->ttl);
     }
 

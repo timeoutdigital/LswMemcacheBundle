@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file bootstraps the test environment.
  */

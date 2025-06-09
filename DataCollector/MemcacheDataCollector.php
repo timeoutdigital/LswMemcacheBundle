@@ -1,13 +1,12 @@
 <?php
+
 namespace Lsw\MemcacheBundle\DataCollector;
 
 use Symfony\Component\Yaml\Yaml;
-
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Lsw\MemcacheBundle\Cache\LoggingMemcacheInterface;
-
 
 /**
  * MemcacheDataCollector
@@ -24,8 +23,8 @@ class MemcacheDataCollector extends DataCollector
      */
     public function __construct()
     {
-        $this->pools = array();
-        $this->options = array();
+        $this->pools = [];
+        $this->options = [];
     }
 
     /**
@@ -48,8 +47,8 @@ class MemcacheDataCollector extends DataCollector
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $empty = array('calls'=>array(),'config'=>array(),'options'=>array(),'statistics'=>array());
-        $this->data = array('pools'=>$empty,'total'=>$empty);
+        $empty = ['calls' => [],'config' => [],'options' => [],'statistics' => []];
+        $this->data = ['pools' => $empty,'total' => $empty];
         foreach ($this->pools as $name => $memcache) {
             $calls = $memcache->getLoggedCalls();
             $this->data['pools']['calls'][$name] = $calls;
@@ -61,9 +60,9 @@ class MemcacheDataCollector extends DataCollector
 
     private function calculateStatistics($calls)
     {
-        $statistics = array();
+        $statistics = [];
         foreach ($this->data['pools']['calls'] as $name => $calls) {
-            $statistics[$name] = array('calls'=>0,'time'=>0,'reads'=>0,'hits'=>0,'misses'=>0,'writes'=>0);
+            $statistics[$name] = ['calls' => 0,'time' => 0,'reads' => 0,'hits' => 0,'misses' => 0,'writes' => 0];
             foreach ($calls as $call) {
                 $statistics[$name]['calls'] += 1;
                 $statistics[$name]['time'] += $call->time;
@@ -74,12 +73,12 @@ class MemcacheDataCollector extends DataCollector
                     } else {
                         $statistics[$name]['misses'] += 1;
                     }
-                } elseif (in_array($call->name,array('set','add','cas','increment','decrement','delete'))) {
+                } elseif (in_array($call->name, ['set','add','cas','increment','decrement','delete'])) {
                     $statistics[$name]['writes'] += 1;
                 }
             }
             if ($statistics[$name]['reads']) {
-                $statistics[$name]['ratio'] = 100*$statistics[$name]['hits']/$statistics[$name]['reads'].'%';
+                $statistics[$name]['ratio'] = 100 * $statistics[$name]['hits'] / $statistics[$name]['reads'].'%';
             } else {
                 $statistics[$name]['ratio'] = 'N/A';
             }
@@ -90,14 +89,14 @@ class MemcacheDataCollector extends DataCollector
 
     private function calculateTotalStatistics($statistics)
     {
-        $totals = array('calls'=>0,'time'=>0,'reads'=>0,'hits'=>0,'misses'=>0,'writes'=>0);
+        $totals = ['calls' => 0,'time' => 0,'reads' => 0,'hits' => 0,'misses' => 0,'writes' => 0];
         foreach ($statistics as $name => $values) {
             foreach ($totals as $key => $value) {
                 $totals[$key] += $statistics[$name][$key];
             }
         }
         if ($totals['reads']) {
-            $totals['ratio'] = 100*$totals['hits']/$totals['reads'].'%';
+            $totals['ratio'] = 100 * $totals['hits'] / $totals['reads'].'%';
         } else {
             $totals['ratio'] = 'N/A';
         }

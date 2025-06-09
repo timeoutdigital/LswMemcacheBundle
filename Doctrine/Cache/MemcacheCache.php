@@ -1,8 +1,8 @@
 <?php
+
 namespace Lsw\MemcacheBundle\Doctrine\Cache;
 
-use \MemcachePool;
-
+use MemcachePool;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 
@@ -49,7 +49,7 @@ class MemcacheCache extends CacheProvider
      */
     public function setPrefix($prefix)
     {
-      $this->prefix = $prefix;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -59,7 +59,7 @@ class MemcacheCache extends CacheProvider
      */
     public function getPrefix()
     {
-      return $this->prefix;
+        return $this->prefix;
     }
 
     /**
@@ -111,12 +111,12 @@ class MemcacheCache extends CacheProvider
     protected function doGetStats()
     {
         $stats = $this->memcache->getStats();
-        return array(
+        return [
             Cache::STATS_HITS   => $stats['get_hits'],
             Cache::STATS_MISSES => $stats['get_misses'],
             Cache::STATS_UPTIME => $stats['uptime'],
             Cache::STATS_MEMORY_USAGE       => $stats['bytes'],
             Cache::STATS_MEMORY_AVAILIABLE  => $stats['limit_maxbytes'],
-        );
+        ];
     }
 }

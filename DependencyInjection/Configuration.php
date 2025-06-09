@@ -52,9 +52,9 @@ class Configuration implements ConfigurationInterface
                         ->prototype('array')
                             ->children()
                                 ->scalarNode('host')
-                                	->cannotBeEmpty()
-                                	->isRequired()
-                               	->end()
+                                    ->cannotBeEmpty()
+                                    ->isRequired()
+                                   ->end()
                                 ->scalarNode('tcp_port')
                                     ->defaultValue(11211)
                                     ->validate()
@@ -70,7 +70,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                                 ->booleanNode('persistent')
-                                	->defaultTrue()
+                                    ->defaultTrue()
                                 ->end()
                                 ->scalarNode('weight')
                                     ->defaultValue(1)
@@ -80,20 +80,20 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                                 ->scalarNode('timeout')
-	                                ->defaultValue(1)
-	                                ->validate()
-	                                ->ifTrue(function ($v) { return !is_numeric($v); })
-	                                	->thenInvalid('timeout must be numeric')
-	                                ->end()
+                                    ->defaultValue(1)
+                                    ->validate()
+                                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                                        ->thenInvalid('timeout must be numeric')
+                                    ->end()
                                 ->end()
                                 ->scalarNode('retry_interval')
-	                                ->defaultValue(15)
-	                                ->validate()
-	                                ->ifTrue(function ($v) { return !is_numeric($v); })
-	                                	->thenInvalid('retry_interval must be numeric')
-	                                ->end()
+                                    ->defaultValue(15)
+                                    ->validate()
+                                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                                        ->thenInvalid('retry_interval must be numeric')
+                                    ->end()
                                 ->end()
-                        	->end()
+                            ->end()
                         ->end()
                     ->end()
                     ->append($this->addMemcacheOptionsSection())
@@ -125,7 +125,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('lock_max_wait')
                     ->defaultNull()
                     ->validate()
-                    ->always(function($v) {
+                    ->always(function ($v) {
                         if (null === $v) {
                             return $v;
                         }
@@ -153,7 +153,7 @@ class Configuration implements ConfigurationInterface
         $tree = new TreeBuilder();
         $node = $tree->root('doctrine');
 
-        foreach (array('metadata_cache', 'result_cache', 'query_cache') as $type) {
+        foreach (['metadata_cache', 'result_cache', 'query_cache'] as $type) {
             $node->children()
                 ->arrayNode($type)
                     ->canBeUnset()
@@ -164,16 +164,16 @@ class Configuration implements ConfigurationInterface
                     ->fixXmlConfig('entity_manager')
                     ->children()
                         ->arrayNode('entity_managers')
-                            ->defaultValue(array())
-                            ->beforeNormalization()->ifString()->then(function($v) { return (array) $v; })->end()
+                            ->defaultValue([])
+                            ->beforeNormalization()->ifString()->then(function ($v) { return (array) $v; })->end()
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
                     ->fixXmlConfig('document_manager')
                     ->children()
                         ->arrayNode('document_managers')
-                            ->defaultValue(array())
-                            ->beforeNormalization()->ifString()->then(function($v) { return (array) $v; })->end()
+                            ->defaultValue([])
+                            ->beforeNormalization()->ifString()->then(function ($v) { return (array) $v; })->end()
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -183,7 +183,7 @@ class Configuration implements ConfigurationInterface
 
         return $node;
     }
-    
+
     /**
      * Configure the "lsw_memcache.firewall" section
      *
@@ -191,10 +191,10 @@ class Configuration implements ConfigurationInterface
      */
     private function addFirewallSection()
     {
-    	$tree = new TreeBuilder();
-    	$node = $tree->root('firewall');
-    
-    	$node
+        $tree = new TreeBuilder();
+        $node = $tree->root('firewall');
+
+        $node
             ->children()
                 ->scalarNode('pool')->isRequired()->end()
                 ->scalarNode('prefix')->defaultValue('lmbf')->end()
@@ -210,7 +210,7 @@ class Configuration implements ConfigurationInterface
                     ->validate()
                     ->ifTrue(function ($v) { return !is_numeric($v); })
                         ->thenInvalid('spin_lock_wait must be numeric')
-                	->end()
+                    ->end()
                 ->end()
                 ->scalarNode('lock_max_wait')
                     ->defaultValue(300)
@@ -220,14 +220,14 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('reverse_proxies')
-                    ->defaultValue(array())
+                    ->defaultValue([])
                     ->prototype('scalar')->end()
                 ->end()
                 ->scalarNode('x_forwarded_for')->defaultFalse()->end()
             ->end()
         ->end();
-    	
-    	return $node;
+
+        return $node;
     }
 
     /**
@@ -241,75 +241,75 @@ class Configuration implements ConfigurationInterface
         $node = $tree->root('options');
 
         // Memcache only configs
-        
+
         $node
             ->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('allow_failover')->defaultTrue()->end()
                 ->scalarNode('max_failover_attempts')
-		            ->defaultValue(20)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('max_failover_attempts option must be numeric')
-		            ->end()
-	            ->end()            
+                    ->defaultValue(20)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('max_failover_attempts option must be numeric')
+                    ->end()
+                ->end()
                 ->scalarNode('default_port')
-		            ->defaultValue(11211)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('default_port option must be numeric')
-		            ->end()
-	            ->end()            
+                    ->defaultValue(11211)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('default_port option must be numeric')
+                    ->end()
+                ->end()
                 ->scalarNode('chunk_size')
-		            ->defaultValue(32768)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('chunk_size option must be numeric')
-		            ->end()
-	            ->end()     
+                    ->defaultValue(32768)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('chunk_size option must be numeric')
+                    ->end()
+                ->end()
                 ->scalarNode('protocol')
                     ->defaultValue('ascii')
                     ->validate()
-                    ->ifNotInArray(array('ascii', 'binary'))
+                    ->ifNotInArray(['ascii', 'binary'])
                         ->thenInvalid('protocol option must be: ascii or binary')
                     ->end()
-                ->end()     
+                ->end()
                 ->scalarNode('hash_strategy')
                     ->defaultValue('consistent')
                     ->validate()
-                    ->ifNotInArray(array('standard', 'consistent'))
+                    ->ifNotInArray(['standard', 'consistent'])
                         ->thenInvalid('hash_strategy option must be: standard or consistent')
                     ->end()
-                ->end()     
+                ->end()
                 ->scalarNode('hash_function')
                     ->defaultValue('crc32')
                     ->validate()
-                    ->ifNotInArray(array('crc32', 'fnv'))
+                    ->ifNotInArray(['crc32', 'fnv'])
                         ->thenInvalid('hash_function option must be: crc32 or fnv')
                     ->end()
-                ->end()            
-                ->booleanNode('redundancy')->defaultTrue()->end()            
+                ->end()
+                ->booleanNode('redundancy')->defaultTrue()->end()
                 ->scalarNode('session_redundancy')
-		            ->defaultValue(2)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('session_redundancy option must be numeric')
-		            ->end()
-	            ->end()             
+                    ->defaultValue(2)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('session_redundancy option must be numeric')
+                    ->end()
+                ->end()
                 ->scalarNode('compress_threshold')
-		            ->defaultValue(20000)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('compress_threshold option must be numeric')
-		            ->end()
-	            ->end()             
+                    ->defaultValue(20000)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('compress_threshold option must be numeric')
+                    ->end()
+                ->end()
                 ->scalarNode('lock_timeout')
-		            ->defaultValue(15)
-		            ->validate()
-		            ->ifTrue(function($v) { return !is_numeric($v); })
-		            	->thenInvalid('lock_timeout option must be numeric')
-		            ->end()
-	            ->end() 
+                    ->defaultValue(15)
+                    ->validate()
+                    ->ifTrue(function ($v) { return !is_numeric($v); })
+                        ->thenInvalid('lock_timeout option must be numeric')
+                    ->end()
+                ->end()
             ->end()
         ->end();
 
