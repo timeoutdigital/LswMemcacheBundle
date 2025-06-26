@@ -45,7 +45,7 @@ class MemcacheDataCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
     {
         $empty = ['calls' => [],'config' => [],'options' => [],'statistics' => []];
         $this->data = ['pools' => $empty,'total' => $empty];
